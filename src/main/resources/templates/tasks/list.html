@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Все задания</title>
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="page">
+    <header class="header">
+        <div>
+            <p class="eyebrow">Job4j Todo</p>
+            <h1 th:text="${title}">Все задания</h1>
+        </div>
+        <a class="button button-primary" th:href="@{/tasks/create}">Добавить задание</a>
+    </header>
+
+    <nav class="filters" aria-label="Фильтр заданий">
+        <a th:classappend="${activeFilter == 'all'} ? 'active'" th:href="@{/tasks}">Все</a>
+        <a th:classappend="${activeFilter == 'done'} ? 'active'" th:href="@{/tasks/done}">Выполненные</a>
+        <a th:classappend="${activeFilter == 'new'} ? 'active'" th:href="@{/tasks/new}">Новые</a>
+    </nav>
+
+    <section class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Дата создания</th>
+                <th>Состояние</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task : ${tasks}">
+                <td>
+                    <a class="task-link" th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.description}">
+                        Задание
+                    </a>
+                </td>
+                <td th:text="${#temporals.format(task.created, 'dd.MM.yyyy HH:mm')}">21.05.2026 12:00</td>
+                <td>
+                    <span th:if="${task.done}" class="status status-done">Выполнено</span>
+                    <span th:unless="${task.done}" class="status status-new">Новое</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(tasks)}">
+                <td colspan="3" class="empty">Заданий пока нет</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

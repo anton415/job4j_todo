@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Добавить задание</title>
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="page page-narrow">
+    <header class="header">
+        <div>
+            <p class="eyebrow">Новое задание</p>
+            <h1>Добавить задание</h1>
+        </div>
+        <a class="button" th:href="@{/tasks}">К списку</a>
+    </header>
+
+    <form class="form" th:action="@{/tasks}" method="post">
+        <label for="description">Описание</label>
+        <textarea id="description" name="description" rows="7" required autofocus></textarea>
+        <div class="actions">
+            <button class="button button-primary" type="submit">Сохранить</button>
+            <a class="button" th:href="@{/tasks}">Отмена</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

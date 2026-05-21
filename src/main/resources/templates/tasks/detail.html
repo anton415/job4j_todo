@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${task.description}">Задание</title>
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="page page-narrow">
+    <header class="header">
+        <div>
+            <p class="eyebrow">Задание</p>
+            <h1 th:text="${task.description}">Описание задания</h1>
+        </div>
+        <a class="button" th:href="@{/tasks}">К списку</a>
+    </header>
+
+    <section class="details">
+        <dl>
+            <div>
+                <dt>Дата создания</dt>
+                <dd th:text="${#temporals.format(task.created, 'dd.MM.yyyy HH:mm')}">21.05.2026 12:00</dd>
+            </div>
+            <div>
+                <dt>Состояние</dt>
+                <dd>
+                    <span th:if="${task.done}" class="status status-done">Выполнено</span>
+                    <span th:unless="${task.done}" class="status status-new">Новое</span>
+                </dd>
+            </div>
+        </dl>
+    </section>
+
+    <div class="actions">
+        <form th:action="@{/tasks/{id}/done(id=${task.id})}" method="post">
+            <button class="button button-primary" type="submit" th:disabled="${task.done}">Выполнено</button>
+        </form>
+        <a class="button" th:href="@{/tasks/{id}/edit(id=${task.id})}">Редактировать</a>
+        <form th:action="@{/tasks/{id}/delete(id=${task.id})}" method="post">
+            <button class="button button-danger" type="submit">Удалить</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>
