@@ -17,6 +17,10 @@
         <a class="button button-primary" th:href="@{/tasks/create}">Добавить задание</a>
     </header>
 
+    <div class="alert alert-error" th:if="${error}" th:text="${error}">
+        Не удалось выполнить действие
+    </div>
+
     <nav class="filters" aria-label="Фильтр заданий">
         <a th:classappend="${activeFilter == 'all'} ? 'active'" th:href="@{/tasks}">Все</a>
         <a th:classappend="${activeFilter == 'done'} ? 'active'" th:href="@{/tasks/done}">Выполненные</a>

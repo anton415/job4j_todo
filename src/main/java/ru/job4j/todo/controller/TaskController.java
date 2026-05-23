@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
@@ -53,8 +54,11 @@ public class TaskController {
     }
 
     @PostMapping("/tasks/{id}/done")
-    public String setDone(@PathVariable int id) {
-        taskService.setDone(id);
+    public String setDone(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        if (!taskService.setDone(id)) {
+            redirectAttributes.addFlashAttribute("error", "Не удалось обновить задание. Возможно, оно уже удалено.");
+            return "redirect:/tasks";
+        }
         return "redirect:/tasks/" + id;
     }
 
@@ -68,14 +72,20 @@ public class TaskController {
     public String update(@PathVariable int id,
                          @RequestParam String title,
                          @RequestParam String description,
-                         @RequestParam(defaultValue = "false") boolean done) {
-        taskService.update(id, title, description, done);
+                         @RequestParam(defaultValue = "false") boolean done,
+                         RedirectAttributes redirectAttributes) {
+        if (!taskService.update(id, title, description, done)) {
+            redirectAttributes.addFlashAttribute("error", "Не удалось обновить задание. Возможно, оно уже удалено.");
+            return "redirect:/tasks";
+        }
         return "redirect:/tasks/" + id;
     }
 
     @PostMapping("/tasks/{id}/delete")
-    public String delete(@PathVariable int id) {
-        taskService.delete(id);
+    public String delete(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        if (!taskService.delete(id)) {
+            redirectAttributes.addFlashAttribute("error", "Не удалось удалить задание. Возможно, оно уже удалено.");
+        }
         return "redirect:/tasks";
     }
 
