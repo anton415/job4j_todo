@@ -31,8 +31,9 @@ public class TaskService {
         return taskStore.findById(id);
     }
 
-    public Task create(String description) {
+    public Task create(String title, String description) {
         var task = Task.builder()
+                .title(title)
                 .description(description)
                 .created(LocalDateTime.now())
                 .done(false)
@@ -40,9 +41,10 @@ public class TaskService {
         return taskStore.save(task);
     }
 
-    public boolean update(int id, String description, boolean done) {
+    public boolean update(int id, String title, String description, boolean done) {
         var task = Task.builder()
                 .id(id)
+                .title(title)
                 .description(description)
                 .done(done)
                 .build();

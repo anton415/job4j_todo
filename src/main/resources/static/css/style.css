@@ -205,10 +205,9 @@ label {
     font-weight: 700;
 }
 
+input[type="text"],
 textarea {
     width: 100%;
-    min-height: 160px;
-    resize: vertical;
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 12px;
@@ -216,6 +215,12 @@ textarea {
     font: inherit;
 }
 
+textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+
+input[type="text"]:focus,
 textarea:focus {
     border-color: var(--primary);
     outline: none;

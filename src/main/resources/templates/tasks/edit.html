@@ -18,8 +18,11 @@
     </header>
 
     <form class="form" th:action="@{/tasks/{id}/update(id=${task.id})}" method="post">
+        <label for="title">Название</label>
+        <input id="title" name="title" type="text" maxlength="255" required autofocus th:value="${task.title}">
+
         <label for="description">Описание</label>
-        <textarea id="description" name="description" rows="7" required autofocus th:text="${task.description}"></textarea>
+        <textarea id="description" name="description" rows="7" required th:text="${task.description}"></textarea>
 
         <label class="checkbox">
             <input type="checkbox" name="done" value="true" th:checked="${task.done}">

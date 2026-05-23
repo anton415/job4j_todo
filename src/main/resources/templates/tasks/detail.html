@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:text="${task.description}">Задание</title>
+    <title th:text="${task.title}">Задание</title>
     <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -12,13 +12,17 @@
     <header class="header">
         <div>
             <p class="eyebrow">Задание</p>
-            <h1 th:text="${task.description}">Описание задания</h1>
+            <h1 th:text="${task.title}">Название задания</h1>
         </div>
         <a class="button" th:href="@{/tasks}">К списку</a>
     </header>
 
     <section class="details">
         <dl>
+            <div>
+                <dt>Описание</dt>
+                <dd th:text="${task.description}">Описание задания</dd>
+            </div>
             <div>
                 <dt>Дата создания</dt>
                 <dd th:text="${#temporals.format(task.created, 'dd.MM.yyyy HH:mm')}">21.05.2026 12:00</dd>

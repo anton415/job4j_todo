@@ -27,7 +27,7 @@
         <table>
             <thead>
             <tr>
-                <th>Имя</th>
+                <th>Название</th>
                 <th>Дата создания</th>
                 <th>Состояние</th>
             </tr>
@@ -35,7 +35,7 @@
             <tbody>
             <tr th:each="task : ${tasks}">
                 <td>
-                    <a class="task-link" th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.description}">
+                    <a class="task-link" th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.title}">
                         Задание
                     </a>
                 </td>

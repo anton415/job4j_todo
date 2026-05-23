@@ -48,6 +48,7 @@ public class TaskStore {
             if (existing == null) {
                 return false;
             }
+            existing.setTitle(task.getTitle());
             existing.setDescription(task.getDescription());
             existing.setDone(task.isDone());
             session.update(existing);

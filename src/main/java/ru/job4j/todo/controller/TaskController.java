@@ -41,8 +41,8 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public String create(@RequestParam String description) {
-        taskService.create(description);
+    public String create(@RequestParam String title, @RequestParam String description) {
+        taskService.create(title, description);
         return "redirect:/tasks";
     }
 
@@ -66,9 +66,10 @@ public class TaskController {
 
     @PostMapping("/tasks/{id}/update")
     public String update(@PathVariable int id,
+                         @RequestParam String title,
                          @RequestParam String description,
                          @RequestParam(defaultValue = "false") boolean done) {
-        taskService.update(id, description, done);
+        taskService.update(id, title, description, done);
         return "redirect:/tasks/" + id;
     }
 
