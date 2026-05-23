@@ -8,3 +8,5 @@ CREATE TABLE tasks (
     created TIMESTAMP,
     done BOOLEAN
 );
+
+--rollback DROP TABLE IF EXISTS tasks;
