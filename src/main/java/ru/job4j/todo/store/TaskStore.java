@@ -43,40 +43,40 @@ public class TaskStore {
     }
 
     public boolean update(Task task) {
-        return tx(session -> {
-            var existing = session.get(Task.class, task.getId());
-            if (existing == null) {
-                return false;
-            }
-            existing.setTitle(task.getTitle());
-            existing.setDescription(task.getDescription());
-            existing.setDone(task.isDone());
-            session.update(existing);
-            return true;
-        });
+        return tx(session -> session
+                .createQuery("""
+                        update Task
+                        set title = :title,
+                            description = :description,
+                            done = :done
+                        where id = :id
+                        """)
+                .setParameter("title", task.getTitle())
+                .setParameter("description", task.getDescription())
+                .setParameter("done", task.isDone())
+                .setParameter("id", task.getId())
+                .executeUpdate() > 0);
     }
 
     public boolean setDone(int id) {
-        return tx(session -> {
-            var task = session.get(Task.class, id);
-            if (task == null) {
-                return false;
-            }
-            task.setDone(true);
-            session.update(task);
-            return true;
-        });
+        return tx(session -> session
+                .createQuery("""
+                        update Task
+                        set done = true
+                        where id = :id
+                        """)
+                .setParameter("id", id)
+                .executeUpdate() > 0);
     }
 
     public boolean delete(int id) {
-        return tx(session -> {
-            var task = session.get(Task.class, id);
-            if (task == null) {
-                return false;
-            }
-            session.delete(task);
-            return true;
-        });
+        return tx(session -> session
+                .createQuery("""
+                        delete from Task
+                        where id = :id
+                        """)
+                .setParameter("id", id)
+                .executeUpdate() > 0);
     }
 
     private <T> T tx(Function<Session, T> command) {
