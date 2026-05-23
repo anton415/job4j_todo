@@ -6,4 +6,5 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
 
     <include file="db/scripts/001_ddl_create_tasks.sql"/>
+    <include file="db/scripts/002_ddl_create_todo_user.sql"/>
 </databaseChangeLog>

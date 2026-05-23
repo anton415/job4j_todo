@@ -14,7 +14,15 @@
             <p class="eyebrow">Job4j Todo</p>
             <h1 th:text="${title}">Все задания</h1>
         </div>
-        <a class="button button-primary" th:href="@{/tasks/create}">Добавить задание</a>
+        <div class="header-actions">
+            <div class="userbar" th:if="${currentUser != null}">
+                <span class="user-name" th:text="${currentUser.name}">Пользователь</span>
+                <form th:action="@{/logout}" method="post">
+                    <button class="button" type="submit">Выйти</button>
+                </form>
+            </div>
+            <a class="button button-primary" th:href="@{/tasks/create}">Добавить задание</a>
+        </div>
     </header>
 
     <div class="alert alert-error" th:if="${error}" th:text="${error}">

@@ -14,7 +14,15 @@
             <p class="eyebrow">Новое задание</p>
             <h1>Добавить задание</h1>
         </div>
-        <a class="button" th:href="@{/tasks}">К списку</a>
+        <div class="header-actions">
+            <div class="userbar" th:if="${currentUser != null}">
+                <span class="user-name" th:text="${currentUser.name}">Пользователь</span>
+                <form th:action="@{/logout}" method="post">
+                    <button class="button" type="submit">Выйти</button>
+                </form>
+            </div>
+            <a class="button" th:href="@{/tasks}">К списку</a>
+        </div>
     </header>
 
     <form class="form" th:action="@{/tasks}" method="post">

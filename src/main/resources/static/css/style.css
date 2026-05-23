@@ -36,6 +36,10 @@ body {
     width: min(760px, calc(100% - 32px));
 }
 
+.page-auth {
+    width: min(460px, calc(100% - 32px));
+}
+
 .header {
     display: flex;
     align-items: center;
@@ -58,12 +62,28 @@ h1 {
     line-height: 1.2;
 }
 
+.header-actions,
 .filters,
 .actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+}
+
+.header-actions {
+    justify-content: flex-end;
+}
+
+.userbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-name {
+    color: var(--muted);
+    font-weight: 700;
 }
 
 .filters {
@@ -138,6 +158,12 @@ h1 {
     border-color: rgba(211, 58, 44, 0.35);
     background: #fff0ee;
     color: var(--danger);
+}
+
+.alert-success {
+    border-color: rgba(31, 122, 61, 0.35);
+    background: var(--done-bg);
+    color: var(--done-text);
 }
 
 .table-wrap,
@@ -221,6 +247,7 @@ label {
 }
 
 input[type="text"],
+input[type="password"],
 textarea {
     width: 100%;
     border: 1px solid var(--border);
@@ -236,6 +263,7 @@ textarea {
 }
 
 input[type="text"]:focus,
+input[type="password"]:focus,
 textarea:focus {
     border-color: var(--primary);
     outline: none;
@@ -286,6 +314,12 @@ form {
     }
 
     .header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .header-actions,
+    .userbar {
         align-items: flex-start;
         flex-direction: column;
     }

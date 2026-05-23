@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Вход в систему</title>
+    <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<main class="page page-auth">
+    <header class="header">
+        <div>
+            <p class="eyebrow">Job4j Todo</p>
+            <h1>Вход</h1>
+        </div>
+    </header>
+
+    <div class="alert alert-success" th:if="${success}" th:text="${success}">
+        Регистрация успешна
+    </div>
+    <div class="alert alert-error" th:if="${error}" th:text="${error}">
+        Неверные логин или пароль
+    </div>
+
+    <form class="form" th:action="@{/login}" method="post">
+        <label for="login">Логин</label>
+        <input id="login" name="login" type="text" maxlength="255" required autofocus th:value="${login}">
+
+        <label for="password">Пароль</label>
+        <input id="password" name="password" type="password" maxlength="255" required>
+
+        <div class="actions">
+            <button class="button button-primary" type="submit">Войти</button>
+            <a class="button" th:href="@{/register}">Регистрация</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>
