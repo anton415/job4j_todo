@@ -22,11 +22,15 @@ public class UserService {
                 .login(normalizeLogin(login))
                 .password(password)
                 .build();
-        if (!validator.validate(user).isEmpty()
-                || userStore.findByLogin(user.getLogin()).isPresent()) {
+        try {
+            if (!validator.validate(user).isEmpty()
+                    || userStore.findByLogin(user.getLogin()).isPresent()) {
+                return Optional.empty();
+            }
+            return Optional.of(userStore.save(user));
+        } catch (Exception e) {
             return Optional.empty();
         }
-        return Optional.of(userStore.save(user));
     }
 
     public Optional<User> findByLoginAndPassword(String login, String password) {

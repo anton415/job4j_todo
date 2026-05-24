@@ -46,7 +46,11 @@ public class CrudRepository {
             }
             return sq.uniqueResultOptional();
         };
-        return tx(command);
+        try {
+            return tx(command);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public <T> List<T> query(String query, Class<T> cl) {
