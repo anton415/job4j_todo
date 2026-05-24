@@ -9,10 +9,12 @@ import ru.job4j.todo.store.UserStore;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -43,7 +45,6 @@ class UserServiceTest {
 
     @Test
     void whenCreateWithMixedCaseLoginThenSaveNormalizedLogin() {
-        when(userStore.findByLogin("user@mail.ru")).thenReturn(Optional.empty());
         when(userStore.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Optional<User> user = userService.create(" Anton ", " User@mail.ru ", "password");
@@ -51,7 +52,8 @@ class UserServiceTest {
         assertThat(user).isPresent();
         assertThat(user.get().getName()).isEqualTo("Anton");
         assertThat(user.get().getLogin()).isEqualTo("user@mail.ru");
-        verify(userStore).findByLogin("user@mail.ru");
+        verify(userStore).save(any(User.class));
+        verify(userStore, never()).findByLogin(anyString());
     }
 
     @Test
@@ -73,24 +75,23 @@ class UserServiceTest {
     }
 
     @Test
-    void whenCreateExistingLoginThenDoNotSaveUser() {
-        var existingUser = User.builder()
-                .id(1)
-                .name("Anton")
-                .login("user@mail.ru")
-                .password("password")
-                .build();
-        when(userStore.findByLogin("user@mail.ru")).thenReturn(Optional.of(existingUser));
+    void whenCreateExistingLoginThenReturnEmptyOptional() {
+        when(userStore.save(any(User.class))).thenThrow(
+                new org.hibernate.exception.ConstraintViolationException(
+                        "duplicate login",
+                        new SQLException(),
+                        "todo_user_lower_login_unique_idx"
+                )
+        );
 
         Optional<User> user = userService.create("Anton", "User@mail.ru", "password");
 
         assertThat(user).isEmpty();
-        verify(userStore, never()).save(any(User.class));
+        verify(userStore).save(any(User.class));
     }
 
     @Test
     void whenCreateSaveFailsThenReturnEmptyOptional() {
-        when(userStore.findByLogin("user@mail.ru")).thenReturn(Optional.empty());
         when(userStore.save(any(User.class))).thenThrow(new RuntimeException());
 
         Optional<User> user = userService.create("Anton", "User@mail.ru", "password");

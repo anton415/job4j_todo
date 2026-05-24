@@ -22,11 +22,10 @@ public class UserService {
                 .login(normalizeLogin(login))
                 .password(password)
                 .build();
+        if (!validator.validate(user).isEmpty()) {
+            return Optional.empty();
+        }
         try {
-            if (!validator.validate(user).isEmpty()
-                    || userStore.findByLogin(user.getLogin()).isPresent()) {
-                return Optional.empty();
-            }
             return Optional.of(userStore.save(user));
         } catch (Exception e) {
             return Optional.empty();
