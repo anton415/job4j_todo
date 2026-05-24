@@ -57,7 +57,7 @@ public class UserController {
             return "users/register";
         }
         redirectAttributes.addFlashAttribute("success", "Регистрация успешна. Войдите в систему.");
-        redirectAttributes.addFlashAttribute("login", login);
+        redirectAttributes.addFlashAttribute("login", userOptional.get().getLogin());
         return "redirect:/login";
     }
 

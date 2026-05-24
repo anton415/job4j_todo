@@ -15,7 +15,7 @@ public class UserStore {
 
     public Optional<User> findByLogin(String login) {
         return crudRepository.optional(
-                "from TodoUser where login = :login",
+                "from TodoUser where lower(login) = :login",
                 User.class,
                 Map.of("login", login)
         );
@@ -25,7 +25,7 @@ public class UserStore {
         return crudRepository.optional(
                 """
                         from TodoUser
-                        where login = :login
+                        where lower(login) = :login
                           and password = :password
                         """,
                 User.class,

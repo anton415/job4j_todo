@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @Entity(name = "TodoUser")
 @Table(name = "todo_user")
@@ -24,14 +25,17 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
+    @NotBlank
     @Column(name = "name", nullable = false, length = 255)
     private String name;
 
+    @NotBlank
     @Column(name = "login", nullable = false, unique = true, length = 255)
     private String login;
 
+    @NotBlank
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 }
