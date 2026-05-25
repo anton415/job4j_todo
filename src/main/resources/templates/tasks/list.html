@@ -41,6 +41,7 @@
             <tr>
                 <th>Название</th>
                 <th>Пользователь</th>
+                <th>Приоритет</th>
                 <th>Дата создания</th>
                 <th>Состояние</th>
             </tr>
@@ -53,6 +54,7 @@
                     </a>
                 </td>
                 <td th:text="${task.user != null ? task.user.name : 'Не назначен'}">Пользователь</td>
+                <td th:text="${task.priority != null ? task.priority.name : 'Не задан'}">Приоритет</td>
                 <td th:text="${#temporals.format(task.created, 'dd.MM.yyyy HH:mm')}">21.05.2026 12:00</td>
                 <td>
                     <span th:if="${task.done}" class="status status-done">Выполнено</span>
@@ -60,7 +62,7 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(tasks)}">
-                <td colspan="4" class="empty">Заданий пока нет</td>
+                <td colspan="5" class="empty">Заданий пока нет</td>
             </tr>
             </tbody>
         </table>

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.store.PriorityStore;
 import ru.job4j.todo.store.TaskStore;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TaskService {
 
+    private static final String DEFAULT_PRIORITY = "normal";
+
     private final TaskStore taskStore;
+    private final PriorityStore priorityStore;
 
     public List<Task> findAll() {
         return taskStore.findAll();
@@ -39,6 +43,8 @@ public class TaskService {
                 .created(LocalDateTime.now())
                 .done(false)
                 .user(user)
+                .priority(priorityStore.findByName(DEFAULT_PRIORITY)
+                        .orElseThrow(() -> new IllegalStateException("Default priority is not found")))
                 .build();
         return taskStore.save(task);
     }

@@ -15,19 +15,42 @@ public class TaskStore {
     private final CrudRepository crudRepository;
 
     public List<Task> findAll() {
-        return crudRepository.query("from Task order by created desc", Task.class);
+        return crudRepository.query("""
+                SELECT task
+                FROM Task task
+                LEFT JOIN FETCH task.user
+                LEFT JOIN FETCH task.priority
+                ORDER BY task.created DESC
+                """, Task.class);
     }
 
     public List<Task> findByDone(boolean done) {
         return crudRepository.query(
-                "from Task where done = :done order by created desc",
+                """
+                        SELECT task
+                        FROM Task task
+                        LEFT JOIN FETCH task.user
+                        LEFT JOIN FETCH task.priority
+                        WHERE task.done = :done
+                        ORDER BY task.created DESC
+                        """,
                 Task.class,
                 Map.of("done", done)
         );
     }
 
     public Optional<Task> findById(int id) {
-        return crudRepository.tx(session -> Optional.ofNullable(session.get(Task.class, id)));
+        return crudRepository.optional(
+                """
+                        SELECT task
+                        FROM Task task
+                        LEFT JOIN FETCH task.user
+                        LEFT JOIN FETCH task.priority
+                        WHERE task.id = :id
+                        """,
+                Task.class,
+                Map.of("id", id)
+        );
     }
 
     public Task save(Task task) {
@@ -38,11 +61,11 @@ public class TaskStore {
     public boolean update(Task task) {
         return crudRepository.tx(session -> session
                 .createQuery("""
-                        update Task
-                        set title = :title,
+                        UPDATE Task
+                        SET title = :title,
                             description = :description,
                             done = :done
-                        where id = :id
+                        WHERE id = :id
                         """)
                 .setParameter("title", task.getTitle())
                 .setParameter("description", task.getDescription())
@@ -54,9 +77,9 @@ public class TaskStore {
     public boolean setDone(int id) {
         return crudRepository.tx(session -> session
                 .createQuery("""
-                        update Task
-                        set done = true
-                        where id = :id
+                        UPDATE Task
+                        SET done = TRUE
+                        WHERE id = :id
                         """)
                 .setParameter("id", id)
                 .executeUpdate() > 0);
@@ -65,8 +88,8 @@ public class TaskStore {
     public boolean delete(int id) {
         return crudRepository.tx(session -> session
                 .createQuery("""
-                        delete from Task
-                        where id = :id
+                        DELETE FROM Task
+                        WHERE id = :id
                         """)
                 .setParameter("id", id)
                 .executeUpdate() > 0);

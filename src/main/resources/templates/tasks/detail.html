@@ -36,6 +36,10 @@
                 <dd th:text="${#temporals.format(task.created, 'dd.MM.yyyy HH:mm')}">21.05.2026 12:00</dd>
             </div>
             <div>
+                <dt>Приоритет</dt>
+                <dd th:text="${task.priority != null ? task.priority.name : 'Не задан'}">Приоритет</dd>
+            </div>
+            <div>
                 <dt>Состояние</dt>
                 <dd>
                     <span th:if="${task.done}" class="status status-done">Выполнено</span>
