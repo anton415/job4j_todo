@@ -31,6 +31,16 @@
 
         <label for="description">Описание</label>
         <textarea id="description" name="description" rows="7" required></textarea>
+
+        <label for="categoryIds">Категории</label>
+        <select id="categoryIds" name="categoryIds" multiple size="4">
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.name}">
+                category
+            </option>
+        </select>
+
         <div class="actions">
             <button class="button button-primary" type="submit">Сохранить</button>
             <a class="button" th:href="@{/tasks}">Отмена</a>

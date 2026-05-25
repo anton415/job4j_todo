@@ -40,6 +40,20 @@
                 <dd th:text="${task.priority != null ? task.priority.name : 'Не задан'}">Приоритет</dd>
             </div>
             <div>
+                <dt>Категории</dt>
+                <dd>
+                    <span class="category-list"
+                          th:if="${task.categories != null && !task.categories.isEmpty()}">
+                        <span class="category-tag"
+                              th:each="category : ${task.categories}"
+                              th:text="${category.name}">
+                            category
+                        </span>
+                    </span>
+                    <span th:if="${task.categories == null || task.categories.isEmpty()}">Не заданы</span>
+                </dd>
+            </div>
+            <div>
                 <dt>Состояние</dt>
                 <dd>
                     <span th:if="${task.done}" class="status status-done">Выполнено</span>

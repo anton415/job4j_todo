@@ -2,11 +2,15 @@ package ru.job4j.todo.store;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,10 +20,11 @@ public class TaskStore {
 
     public List<Task> findAll() {
         return crudRepository.query("""
-                SELECT task
+                SELECT DISTINCT task
                 FROM Task task
                 LEFT JOIN FETCH task.user
                 LEFT JOIN FETCH task.priority
+                LEFT JOIN FETCH task.categories
                 ORDER BY task.created DESC
                 """, Task.class);
     }
@@ -27,10 +32,11 @@ public class TaskStore {
     public List<Task> findByDone(boolean done) {
         return crudRepository.query(
                 """
-                        SELECT task
+                        SELECT DISTINCT task
                         FROM Task task
                         LEFT JOIN FETCH task.user
                         LEFT JOIN FETCH task.priority
+                        LEFT JOIN FETCH task.categories
                         WHERE task.done = :done
                         ORDER BY task.created DESC
                         """,
@@ -42,10 +48,11 @@ public class TaskStore {
     public Optional<Task> findById(int id) {
         return crudRepository.optional(
                 """
-                        SELECT task
+                        SELECT DISTINCT task
                         FROM Task task
                         LEFT JOIN FETCH task.user
                         LEFT JOIN FETCH task.priority
+                        LEFT JOIN FETCH task.categories
                         WHERE task.id = :id
                         """,
                 Task.class,
@@ -54,7 +61,20 @@ public class TaskStore {
     }
 
     public Task save(Task task) {
-        crudRepository.run(session -> session.persist(task));
+        crudRepository.run(session -> {
+            var categories = task.getCategories();
+            if (categories != null && !categories.isEmpty()) {
+                var managedCategories = categories.stream()
+                        .map(Category::getId)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .map(id -> session.get(Category.class, id))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                task.setCategories(managedCategories);
+            }
+            session.persist(task);
+        });
         return task;
     }
 

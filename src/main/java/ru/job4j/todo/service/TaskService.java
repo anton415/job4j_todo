@@ -2,14 +2,19 @@ package ru.job4j.todo.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.store.CategoryStore;
 import ru.job4j.todo.store.PriorityStore;
 import ru.job4j.todo.store.TaskStore;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ public class TaskService {
 
     private final TaskStore taskStore;
     private final PriorityStore priorityStore;
+    private final CategoryStore categoryStore;
 
     public List<Task> findAll() {
         return taskStore.findAll();
@@ -36,7 +42,11 @@ public class TaskService {
         return taskStore.findById(id);
     }
 
-    public Task create(String title, String description, User user) {
+    public List<Category> findAllCategories() {
+        return categoryStore.findAll();
+    }
+
+    public Task create(String title, String description, User user, List<Integer> categoryIds) {
         var task = Task.builder()
                 .title(title)
                 .description(description)
@@ -45,8 +55,13 @@ public class TaskService {
                 .user(user)
                 .priority(priorityStore.findByName(DEFAULT_PRIORITY)
                         .orElseThrow(() -> new IllegalStateException("Default priority is not found")))
+                .categories(toCategories(categoryIds))
                 .build();
         return taskStore.save(task);
+    }
+
+    public Task create(String title, String description, User user) {
+        return create(title, description, user, List.of());
     }
 
     public boolean update(int id, String title, String description, boolean done) {
@@ -65,5 +80,15 @@ public class TaskService {
 
     public boolean delete(int id) {
         return taskStore.delete(id);
+    }
+
+    private Set<Category> toCategories(List<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return new LinkedHashSet<>();
+        }
+        return categoryIds.stream()
+                .distinct()
+                .map(id -> Category.builder().id(id).build())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

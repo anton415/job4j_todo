@@ -10,4 +10,6 @@
     <include file="db/scripts/003_ddl_add_todo_user_lower_login_unique_index.sql"/>
     <include file="db/scripts/004_ddl_add_tasks_user_id.sql"/>
     <include file="db/scripts/005_ddl_add_priorities.sql"/>
+    <include file="db/scripts/003_ddl_create_categories_table.sql"/>
+    <include file="db/scripts/004_dml_insert_categories.sql"/>
 </databaseChangeLog>

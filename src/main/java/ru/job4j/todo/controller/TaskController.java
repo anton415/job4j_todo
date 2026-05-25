@@ -39,15 +39,17 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/create")
-    public String createPage() {
+    public String createPage(Model model) {
+        model.addAttribute("categories", taskService.findAllCategories());
         return "tasks/create";
     }
 
     @PostMapping("/tasks")
     public String create(@RequestParam String title,
                          @RequestParam String description,
+                         @RequestParam(name = "categoryIds", required = false) List<Integer> categoryIds,
                          @SessionAttribute("user") User user) {
-        taskService.create(title, description, user);
+        taskService.create(title, description, user, categoryIds);
         return "redirect:/tasks";
     }
 
