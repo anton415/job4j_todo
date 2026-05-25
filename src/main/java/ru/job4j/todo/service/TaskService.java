@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.store.TaskStore;
 
 import java.time.LocalDateTime;
@@ -31,12 +32,13 @@ public class TaskService {
         return taskStore.findById(id);
     }
 
-    public Task create(String title, String description) {
+    public Task create(String title, String description, User user) {
         var task = Task.builder()
                 .title(title)
                 .description(description)
                 .created(LocalDateTime.now())
                 .done(false)
+                .user(user)
                 .build();
         return taskStore.save(task);
     }

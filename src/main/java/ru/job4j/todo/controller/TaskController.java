@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 import java.util.List;
@@ -42,8 +44,10 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public String create(@RequestParam String title, @RequestParam String description) {
-        taskService.create(title, description);
+    public String create(@RequestParam String title,
+                         @RequestParam String description,
+                         @SessionAttribute("user") User user) {
+        taskService.create(title, description, user);
         return "redirect:/tasks";
     }
 
