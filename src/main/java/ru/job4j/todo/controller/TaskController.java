@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,12 +47,10 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public String create(@RequestParam String title,
-                         @RequestParam String description,
-                         @RequestParam int priorityId,
+    public String create(@ModelAttribute Task task,
                          @RequestParam(name = "categoryIds", required = false) List<Integer> categoryIds,
                          @SessionAttribute("user") User user) {
-        taskService.create(title, description, user, priorityId, categoryIds);
+        taskService.create(task, user, categoryIds);
         return "redirect:/tasks";
     }
 

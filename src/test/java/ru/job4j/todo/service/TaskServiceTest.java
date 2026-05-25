@@ -84,7 +84,7 @@ class TaskServiceTest {
     }
 
     @Test
-    void whenCreateWithPriorityIdThenSetPriority() {
+    void whenCreateWithTaskThenSetPriority() {
         var priority = Priority.builder()
                 .id(1)
                 .name("urgently")
@@ -96,13 +96,19 @@ class TaskServiceTest {
                 .login("anton@mail.ru")
                 .password("password")
                 .build();
-        when(priorityStore.findById(1)).thenReturn(Optional.of(priority));
+        var expectedTask = Task.builder()
+                .title("Title")
+                .description("Description")
+                .priority(priority)
+                .build();
         when(taskStore.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        var task = taskService.create("Title", "Description", user, 1, List.of());
+        var task = taskService.create(expectedTask, user, List.of());
 
         assertThat(task.getPriority()).isSameAs(priority);
-        verify(priorityStore).findById(1);
+        assertThat(task.getUser()).isSameAs(user);
+        assertThat(task.isDone()).isFalse();
+        verify(priorityStore, never()).findById(1);
         verify(priorityStore, never()).findByName("normal");
         verify(taskStore).save(any(Task.class));
     }

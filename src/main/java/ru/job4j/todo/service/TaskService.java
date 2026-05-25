@@ -51,21 +51,6 @@ public class TaskService {
         return priorityStore.findAll();
     }
 
-    public Task create(String title,
-                       String description,
-                       User user,
-                       int priorityId,
-                       List<Integer> categoryIds) {
-        return create(
-                title,
-                description,
-                user,
-                priorityStore.findById(priorityId)
-                        .orElseThrow(() -> new IllegalArgumentException("Priority is not found")),
-                categoryIds
-        );
-    }
-
     public Task create(String title, String description, User user, List<Integer> categoryIds) {
         return create(
                 title,
@@ -79,6 +64,14 @@ public class TaskService {
 
     public Task create(String title, String description, User user) {
         return create(title, description, user, List.of());
+    }
+
+    public Task create(Task task, User user, List<Integer> categoryIds) {
+        task.setCreated(LocalDateTime.now());
+        task.setDone(false);
+        task.setUser(user);
+        task.setCategories(toCategories(categoryIds));
+        return taskStore.save(task);
     }
 
     public boolean update(int id, String title, String description, boolean done) {
