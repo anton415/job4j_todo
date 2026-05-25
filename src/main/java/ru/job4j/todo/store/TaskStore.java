@@ -23,7 +23,7 @@ public class TaskStore {
                 SELECT DISTINCT task
                 FROM Task task
                 LEFT JOIN FETCH task.user
-                LEFT JOIN FETCH task.priority
+                JOIN FETCH task.priority
                 LEFT JOIN FETCH task.categories
                 ORDER BY task.created DESC
                 """, Task.class);
@@ -35,7 +35,7 @@ public class TaskStore {
                         SELECT DISTINCT task
                         FROM Task task
                         LEFT JOIN FETCH task.user
-                        LEFT JOIN FETCH task.priority
+                        JOIN FETCH task.priority
                         LEFT JOIN FETCH task.categories
                         WHERE task.done = :done
                         ORDER BY task.created DESC
@@ -51,7 +51,7 @@ public class TaskStore {
                         SELECT DISTINCT task
                         FROM Task task
                         LEFT JOIN FETCH task.user
-                        LEFT JOIN FETCH task.priority
+                        JOIN FETCH task.priority
                         LEFT JOIN FETCH task.categories
                         WHERE task.id = :id
                         """,

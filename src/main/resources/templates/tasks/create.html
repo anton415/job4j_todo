@@ -32,6 +32,16 @@
         <label for="description">Описание</label>
         <textarea id="description" name="description" rows="7" required></textarea>
 
+        <label for="priorityId">Приоритет</label>
+        <select id="priorityId" name="priorityId" required>
+            <option th:each="priority : ${priorities}"
+                    th:value="${priority.id}"
+                    th:text="${priority.name}"
+                    th:selected="${priority.name == 'normal'}">
+                priority
+            </option>
+        </select>
+
         <label for="categoryIds">Категории</label>
         <select id="categoryIds" name="categoryIds" multiple size="4">
             <option th:each="category : ${categories}"

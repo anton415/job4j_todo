@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,6 +80,30 @@ class TaskServiceTest {
         assertThat(task.getCategories())
                 .extracting(Category::getId)
                 .containsExactly(1, 2);
+        verify(taskStore).save(any(Task.class));
+    }
+
+    @Test
+    void whenCreateWithPriorityIdThenSetPriority() {
+        var priority = Priority.builder()
+                .id(1)
+                .name("urgently")
+                .position(1)
+                .build();
+        var user = User.builder()
+                .id(1)
+                .name("Anton")
+                .login("anton@mail.ru")
+                .password("password")
+                .build();
+        when(priorityStore.findById(1)).thenReturn(Optional.of(priority));
+        when(taskStore.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var task = taskService.create("Title", "Description", user, 1, List.of());
+
+        assertThat(task.getPriority()).isSameAs(priority);
+        verify(priorityStore).findById(1);
+        verify(priorityStore, never()).findByName("normal");
         verify(taskStore).save(any(Task.class));
     }
 }

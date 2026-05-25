@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Category;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.store.CategoryStore;
@@ -46,18 +47,34 @@ public class TaskService {
         return categoryStore.findAll();
     }
 
+    public List<Priority> findAllPriorities() {
+        return priorityStore.findAll();
+    }
+
+    public Task create(String title,
+                       String description,
+                       User user,
+                       int priorityId,
+                       List<Integer> categoryIds) {
+        return create(
+                title,
+                description,
+                user,
+                priorityStore.findById(priorityId)
+                        .orElseThrow(() -> new IllegalArgumentException("Priority is not found")),
+                categoryIds
+        );
+    }
+
     public Task create(String title, String description, User user, List<Integer> categoryIds) {
-        var task = Task.builder()
-                .title(title)
-                .description(description)
-                .created(LocalDateTime.now())
-                .done(false)
-                .user(user)
-                .priority(priorityStore.findByName(DEFAULT_PRIORITY)
-                        .orElseThrow(() -> new IllegalStateException("Default priority is not found")))
-                .categories(toCategories(categoryIds))
-                .build();
-        return taskStore.save(task);
+        return create(
+                title,
+                description,
+                user,
+                priorityStore.findByName(DEFAULT_PRIORITY)
+                        .orElseThrow(() -> new IllegalStateException("Default priority is not found")),
+                categoryIds
+        );
     }
 
     public Task create(String title, String description, User user) {
@@ -80,6 +97,23 @@ public class TaskService {
 
     public boolean delete(int id) {
         return taskStore.delete(id);
+    }
+
+    private Task create(String title,
+                        String description,
+                        User user,
+                        Priority priority,
+                        List<Integer> categoryIds) {
+        var task = Task.builder()
+                .title(title)
+                .description(description)
+                .created(LocalDateTime.now())
+                .done(false)
+                .user(user)
+                .priority(priority)
+                .categories(toCategories(categoryIds))
+                .build();
+        return taskStore.save(task);
     }
 
     private Set<Category> toCategories(List<Integer> categoryIds) {
