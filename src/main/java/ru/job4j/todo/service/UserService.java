@@ -6,8 +6,10 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.store.UserStore;
 
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +19,18 @@ public class UserService {
     private final Validator validator;
 
     public Optional<User> create(String name, String login, String password) {
+        return create(name, login, password, null);
+    }
+
+    public Optional<User> create(String name, String login, String password, String timezone) {
+        if (!TimeZoneHelper.isSupported(timezone)) {
+            return Optional.empty();
+        }
         var user = User.builder()
                 .name(normalize(name))
                 .login(normalizeLogin(login))
                 .password(password)
+                .timezone(TimeZoneHelper.normalize(timezone))
                 .build();
         if (!validator.validate(user).isEmpty()) {
             return Optional.empty();
@@ -39,6 +49,14 @@ public class UserService {
             return Optional.empty();
         }
         return userStore.findByLoginAndPassword(normalizedLogin, password);
+    }
+
+    public List<TimeZone> findAllTimeZones() {
+        return TimeZoneHelper.findAll();
+    }
+
+    public String findDefaultTimeZoneId() {
+        return TimeZoneHelper.defaultTimeZoneId();
     }
 
     private String normalize(String value) {

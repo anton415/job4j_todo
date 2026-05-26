@@ -57,6 +57,17 @@ class UserServiceTest {
     }
 
     @Test
+    void whenCreateWithTimezoneThenSaveNormalizedTimezone() {
+        when(userStore.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Optional<User> user = userService.create("Anton", "user@mail.ru", "password", " Europe/Moscow ");
+
+        assertThat(user).isPresent();
+        assertThat(user.get().getTimezone()).isEqualTo("Europe/Moscow");
+        verify(userStore).save(any(User.class));
+    }
+
+    @Test
     void whenFindByMixedCaseLoginAndPasswordThenSearchByNormalizedLogin() {
         when(userStore.findByLoginAndPassword("user@mail.ru", "password")).thenReturn(Optional.empty());
 
@@ -69,6 +80,14 @@ class UserServiceTest {
     @Test
     void whenCreateInvalidUserThenDoNotCallStore() {
         Optional<User> user = userService.create(" ", "user@mail.ru", "password");
+
+        assertThat(user).isEmpty();
+        verifyNoInteractions(userStore);
+    }
+
+    @Test
+    void whenCreateWithInvalidTimezoneThenDoNotCallStore() {
+        Optional<User> user = userService.create("Anton", "user@mail.ru", "password", "Unknown/Zone");
 
         assertThat(user).isEmpty();
         verifyNoInteractions(userStore);

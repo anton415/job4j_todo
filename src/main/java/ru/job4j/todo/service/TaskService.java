@@ -31,16 +31,33 @@ public class TaskService {
         return taskStore.findAll();
     }
 
+    public List<Task> findAll(User user) {
+        return applyUserTimeZone(findAll(), user);
+    }
+
     public List<Task> findCompleted() {
         return taskStore.findByDone(true);
+    }
+
+    public List<Task> findCompleted(User user) {
+        return applyUserTimeZone(findCompleted(), user);
     }
 
     public List<Task> findNew() {
         return taskStore.findByDone(false);
     }
 
+    public List<Task> findNew(User user) {
+        return applyUserTimeZone(findNew(), user);
+    }
+
     public Optional<Task> findById(int id) {
         return taskStore.findById(id);
+    }
+
+    public Optional<Task> findById(int id, User user) {
+        return findById(id)
+                .map(task -> applyUserTimeZone(task, user));
     }
 
     public List<Category> findAllCategories() {
@@ -117,5 +134,24 @@ public class TaskService {
                 .distinct()
                 .map(id -> Category.builder().id(id).build())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private List<Task> applyUserTimeZone(List<Task> tasks, User user) {
+        return tasks.stream()
+                .map(task -> applyUserTimeZone(task, user))
+                .collect(Collectors.toList());
+    }
+
+    private Task applyUserTimeZone(Task task, User user) {
+        return Task.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .created(TimeZoneHelper.toUserTimeZone(task.getCreated(), user))
+                .done(task.isDone())
+                .user(task.getUser())
+                .priority(task.getPriority())
+                .categories(task.getCategories())
+                .build();
     }
 }

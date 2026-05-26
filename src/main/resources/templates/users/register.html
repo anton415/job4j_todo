@@ -30,6 +30,16 @@
         <label for="password">Пароль</label>
         <input id="password" name="password" type="password" maxlength="255" required>
 
+        <label for="timezone">Часовой пояс</label>
+        <select id="timezone" name="timezone" required>
+            <option th:each="zone : ${timezones}"
+                    th:value="${zone.getID()}"
+                    th:text="${zone.getID() + ' : ' + zone.getDisplayName()}"
+                    th:selected="${zone.getID() == timezone}">
+                Europe/Moscow : Moscow Standard Time
+            </option>
+        </select>
+
         <div class="actions">
             <button class="button button-primary" type="submit">Создать аккаунт</button>
             <a class="button" th:href="@{/login}">Войти</a>

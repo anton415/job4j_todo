@@ -38,4 +38,14 @@ public class User {
     @NotBlank
     @Column(name = "password", nullable = false, length = 255)
     private String password;
+
+    @Column(name = "user_zone", length = 255)
+    private String timezone;
+
+    public User(Integer id, String name, String login, String password) {
+        this.id = id;
+        this.name = name;
+        this.login = login;
+        this.password = password;
+    }
 }

@@ -25,18 +25,18 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping({"/", "/tasks"})
-    public String listAll(Model model) {
-        return list(model, taskService.findAll(), "Все задания", "all");
+    public String listAll(Model model, @SessionAttribute("user") User user) {
+        return list(model, taskService.findAll(user), "Все задания", "all");
     }
 
     @GetMapping("/tasks/done")
-    public String listDone(Model model) {
-        return list(model, taskService.findCompleted(), "Выполненные задания", "done");
+    public String listDone(Model model, @SessionAttribute("user") User user) {
+        return list(model, taskService.findCompleted(user), "Выполненные задания", "done");
     }
 
     @GetMapping("/tasks/new")
-    public String listNew(Model model) {
-        return list(model, taskService.findNew(), "Новые задания", "new");
+    public String listNew(Model model, @SessionAttribute("user") User user) {
+        return list(model, taskService.findNew(user), "Новые задания", "new");
     }
 
     @GetMapping("/tasks/create")
@@ -55,8 +55,10 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/{id}")
-    public String detail(@PathVariable int id, Model model) {
-        model.addAttribute("task", getTaskOrThrow(id));
+    public String detail(@PathVariable int id,
+                         Model model,
+                         @SessionAttribute("user") User user) {
+        model.addAttribute("task", getTaskOrThrow(id, user));
         return "tasks/detail";
     }
 
@@ -70,8 +72,10 @@ public class TaskController {
     }
 
     @GetMapping("/tasks/{id}/edit")
-    public String editPage(@PathVariable int id, Model model) {
-        model.addAttribute("task", getTaskOrThrow(id));
+    public String editPage(@PathVariable int id,
+                           Model model,
+                           @SessionAttribute("user") User user) {
+        model.addAttribute("task", getTaskOrThrow(id, user));
         return "tasks/edit";
     }
 
@@ -103,8 +107,8 @@ public class TaskController {
         return "tasks/list";
     }
 
-    private Task getTaskOrThrow(int id) {
-        return taskService.findById(id)
+    private Task getTaskOrThrow(int id, User user) {
+        return taskService.findById(id, user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
     }
 }

@@ -12,4 +12,5 @@
     <include file="db/scripts/005_ddl_add_priorities.sql"/>
     <include file="db/scripts/003_ddl_create_categories_table.sql"/>
     <include file="db/scripts/004_dml_insert_categories.sql"/>
+    <include file="db/scripts/006_ddl_add_todo_user_zone.sql"/>
 </databaseChangeLog>

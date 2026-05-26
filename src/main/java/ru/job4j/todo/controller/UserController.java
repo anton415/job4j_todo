@@ -39,21 +39,27 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String registerPage(HttpSession session) {
-        return isAuthenticated(session) ? "redirect:/tasks" : "users/register";
+    public String registerPage(HttpSession session, Model model) {
+        if (isAuthenticated(session)) {
+            return "redirect:/tasks";
+        }
+        addTimeZones(model, null);
+        return "users/register";
     }
 
     @PostMapping("/register")
     public String register(@RequestParam String name,
                            @RequestParam String login,
                            @RequestParam String password,
+                           @RequestParam(required = false) String timezone,
                            Model model,
                            RedirectAttributes redirectAttributes) {
-        var userOptional = userService.create(name, login, password);
+        var userOptional = userService.create(name, login, password, timezone);
         if (userOptional.isEmpty()) {
             model.addAttribute("error", "Не удалось зарегистрировать пользователя. Проверьте данные или выберите другой логин.");
             model.addAttribute("name", name);
             model.addAttribute("login", login);
+            addTimeZones(model, timezone);
             return "users/register";
         }
         redirectAttributes.addFlashAttribute("success", "Регистрация успешна. Войдите в систему.");
@@ -76,6 +82,12 @@ public class UserController {
                 .id(user.getId())
                 .name(user.getName())
                 .login(user.getLogin())
+                .timezone(user.getTimezone())
                 .build();
+    }
+
+    private void addTimeZones(Model model, String timezone) {
+        model.addAttribute("timezones", userService.findAllTimeZones());
+        model.addAttribute("timezone", timezone == null ? userService.findDefaultTimeZoneId() : timezone);
     }
 }

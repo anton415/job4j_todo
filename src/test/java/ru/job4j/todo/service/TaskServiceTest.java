@@ -10,8 +10,10 @@ import ru.job4j.todo.store.CategoryStore;
 import ru.job4j.todo.store.PriorityStore;
 import ru.job4j.todo.store.TaskStore;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,5 +113,33 @@ class TaskServiceTest {
         verify(priorityStore, never()).findById(1);
         verify(priorityStore, never()).findByName("normal");
         verify(taskStore).save(any(Task.class));
+    }
+
+    @Test
+    void whenFindAllWithUserTimezoneThenConvertCreatedFromDefaultTimezone() {
+        TimeZone defaultTimezone = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+            var user = User.builder()
+                    .id(1)
+                    .name("Anton")
+                    .login("anton@mail.ru")
+                    .timezone("Europe/Moscow")
+                    .build();
+            var task = Task.builder()
+                    .id(1)
+                    .title("Title")
+                    .created(LocalDateTime.of(2026, 5, 26, 10, 0))
+                    .build();
+            when(taskStore.findAll()).thenReturn(List.of(task));
+
+            var tasks = taskService.findAll(user);
+
+            assertThat(tasks).extracting(Task::getCreated)
+                    .containsExactly(LocalDateTime.of(2026, 5, 26, 13, 0));
+            assertThat(task.getCreated()).isEqualTo(LocalDateTime.of(2026, 5, 26, 10, 0));
+        } finally {
+            TimeZone.setDefault(defaultTimezone);
+        }
     }
 }
